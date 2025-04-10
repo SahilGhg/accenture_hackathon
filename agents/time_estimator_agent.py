@@ -7,7 +7,7 @@ Estimate how long it would take to resolve this issue.
 Chat:
 {chat}
 
-Output format: Estimated Time - <e.g., 2 days, 1 hour>
+Output format: <e.g., 2 days, 1 hour>
 """
     response = ollama.chat(model="mistral", messages=[
         {"role": "user", "content": prompt}

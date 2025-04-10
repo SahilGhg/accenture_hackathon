@@ -14,3 +14,13 @@ cols = st.columns([1, 2, 1])
 with cols[1]:
     if st.button("👉 Go to AI Assistant", use_container_width=True):
         st.switch_page("pages/app.py")
+
+with st.expander("📘 What does this app do?", expanded=False):
+    st.markdown("""
+    This tool uses multiple AI agents to:
+    - 🧠 Summarize support chats
+    - ✅ Extract key action items
+    - 💡 Recommend resolutions
+    - 🏢 Route tasks to the right teams
+    - ⏱️ Estimate resolution times
+    """)

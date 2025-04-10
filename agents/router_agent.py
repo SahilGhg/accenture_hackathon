@@ -9,7 +9,7 @@ Options: Technical Support, Billing, Account Management
 Chat:
 {chat}
 
-Output format: Assigned Team - <team name>
+Output format: <team name>
 """
     response = ollama.chat(model="mistral", messages=[
         {"role": "user", "content": prompt}

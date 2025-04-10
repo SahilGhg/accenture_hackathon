@@ -86,40 +86,93 @@ if submitted:
         st.warning("⚠️ Please paste a chat or select one from the dataset.")
     else:
         with st.spinner("Running multi-agent analysis..."):
-            summary = summarize_chat(chat_input)
-            action = extract_action(chat_input)
-            resolution = recommend_resolution(chat_input)
-            team = route_ticket(chat_input)
-            time = estimate_resolution_time(chat_input)
+            results = {}
+            
+            status_placeholders = {
+                "summary": st.empty(),
+                "action": st.empty(),
+                "resolution": st.empty(),
+                "team": st.empty(),
+                "time": st.empty(),
+            }
 
+            try:
+                with st.spinner("Running summarizer..."):
+                    results["summary"] = summarize_chat(chat_input)
+                    status_placeholders["summary"].success("✅ Summary generated successfully!")
+            except Exception as e:
+                results["summary"] = f"❌ Error generating summary: {e}"
+
+            try:
+                with st.spinner("Extracting actions..."):
+                    results["action"] = extract_action(chat_input)
+                    status_placeholders["action"].success("✅ Actions extracted successfully!")
+            except Exception as e:
+                results["action"] = f"❌ Error extracting actions: {e}"
+
+            try:
+                with st.spinner("Recommending resolution..."):
+                    resolution, source, keywords = recommend_resolution(chat_input)
+                    results["resolution"] = resolution
+                    results["keywords"] = keywords
+                    status_placeholders["resolution"].success("✅ Resolution suggested!")
+            except Exception as e:
+                results["resolution"] = f"❌ Error recommending resolution: {e}"
+
+            try:
+                with st.spinner("Routing to appropriate team..."):
+                    results["team"] = route_ticket(chat_input)
+                    status_placeholders["team"].success("✅ Ticket routed!")
+            except Exception as e:
+                results["team"] = f"❌ Error routing ticket: {e}"
+
+            try:
+                with st.spinner("Estimating resolution time..."):
+                    results["time"] = estimate_resolution_time(chat_input)
+                    status_placeholders["time"].success("✅ Time estimated!")
+            except Exception as e:
+                results["time"] = f"❌ Error estimating time: {e}"
+
+            for placeholder in status_placeholders.values():
+                placeholder.empty()
+                
         # ===== Results Layout =====
         st.success("✅ Analysis complete!")
         st.markdown("## 🧠 AI Results Summary")
         st.markdown("---")
+        
+        keywords = results['keywords']
+        if isinstance(keywords, str):
+            keywords = [keywords]
 
         with st.container():
-            st.markdown(
-                f"""
+            st.markdown(f"""
                 <div style="padding: 1rem; background-color: #f5f0ff; border-radius: 12px; margin-bottom: 10px;">
                     <h4>📄 <span style='color:#7D3C98'>Summary</span></h4>
-                    <p>{summary}</p>
+                    <p>{results['summary']}</p>
                 </div>
+
                 <div style="padding: 1rem; background-color: #e0f7fa; border-radius: 12px; margin-bottom: 10px;">
                     <h4>✅ <span style='color:#00796B'>Action</span></h4>
-                    <p>{action}</p>
+                    <p>{results['action']}</p>
                 </div>
+
                 <div style="padding: 1rem; background-color: #fffde7; border-radius: 12px; margin-bottom: 10px;">
                     <h4>💡 <span style='color:#F57C00'>Suggested Resolution</span></h4>
-                    <p>{resolution}</p>
+                    <p><strong>{results['resolution']}</strong></p>
+                    <hr style="margin: 10px 0;">
+                    <p style='margin-top: 10px; color: #616161;'>
+                        🔑 <strong>Keywords extracted:</strong> {", ".join(keywords)}
+                    </p>
                 </div>
+
                 <div style="padding: 1rem; background-color: #ede7f6; border-radius: 12px; margin-bottom: 10px;">
                     <h4>🏢 <span style='color:#512DA8'>Assigned Team</span></h4>
-                    <p>{team}</p>
+                    <p>{results['team']}</p>
                 </div>
+
                 <div style="padding: 1rem; background-color: #f1f8e9; border-radius: 12px;">
                     <h4>⏱️ <span style='color:#33691E'>Estimated Time</span></h4>
-                    <p>{time}</p>
+                    <p>{results['time']}</p>
                 </div>
-                """,
-                unsafe_allow_html=True
-            )
+            """, unsafe_allow_html=True)

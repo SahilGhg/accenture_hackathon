@@ -7,7 +7,7 @@ Read the support conversation and extract the main action taken or needed.
 Chat:
 {chat}
 
-Output format: Action - <action here>
+Output format: <action here>
 """
     response = ollama.chat(model="mistral", messages=[
         {"role": "user", "content": prompt}
