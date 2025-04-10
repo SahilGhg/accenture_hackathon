@@ -1,6 +1,4 @@
-# accenture_hackathon
- 
-# AI Support Chat Analyzer
+ # AI Support Chat Analyzer
 
 This is a multi-agent GenAI web application built using Streamlit and Python. It analyzes customer support chats and automates the process of summarizing the issue, identifying key actions, recommending resolutions, routing the issue to the right team, and estimating resolution time.
 
