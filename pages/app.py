@@ -258,18 +258,19 @@ if st.button("Submit Feedback"):
         st.error(f"❌ Error saving feedback: {e}")
 
 with st.expander("📋 View Submitted Feedback", expanded=False):
+    df_feedback = None
     try:
         conn = sqlite3.connect("data/tickets.db")
         df_feedback = pd.read_sql_query("SELECT * FROM feedback ORDER BY id DESC", conn)
         conn.close()
         if df_feedback.empty:
-            st.info("No feedback submitted yet.")
+            st.info("No feedback submitted yet.")                 
         else:
             st.dataframe(df_feedback, use_container_width=True)
     except Exception as e:
         st.error(f"❌ Error loading feedback: {e}")
     
-    if not df_feedback.empty:
+    if df_feedback is not None and not df_feedback.empty:
         if st.button("🗑️ Clear All Feedback"):
             try:
                 conn = sqlite3.connect("data/tickets.db")
