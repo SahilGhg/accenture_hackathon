@@ -1,5 +1,13 @@
-import streamlit as st
+"""Main Streamlit app for AI-powered customer support analyzer."""
+
 import re
+import streamlit as st
+# ===== Import AI Agents =====
+from agents.summarizer_agent import summarize_chat
+from agents.action_extractor_agent import extract_action
+from agents.resolution_agent import recommend_resolution
+from agents.router_agent import route_ticket
+from agents.time_estimator_agent import estimate_resolution_time
 
 # ===== Page Setup =====
 st.set_page_config(page_title="AI Assistant", layout="wide", initial_sidebar_state="collapsed")
@@ -14,12 +22,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ===== Import AI Agents =====
-from agents.summarizer_agent import summarize_chat
-from agents.action_extractor_agent import extract_action
-from agents.resolution_agent import recommend_resolution
-from agents.router_agent import route_ticket
-from agents.time_estimator_agent import estimate_resolution_time
 
 # ===== Load Sample Dataset =====
 def load_sample_chats():
@@ -57,11 +59,24 @@ col1, col2 = st.columns([1, 2])
 
 with col1:
     st.markdown("### 📁Select a Sample Chat")
-    selected_sample = st.selectbox("Choose from dataset:", sample_ids)
+    selected_sample = st.selectbox("Choose from dataset:", sample_ids, key="selected_sample")
 
+if "chat_input" not in st.session_state:
+    st.session_state.chat_input = ""
+
+# Load selected sample into session_state
+if selected_sample != "None":
+    for chat in sample_chats:
+        if chat["id"] == selected_sample:
+            if st.session_state.chat_input != chat["chat"]:
+                st.session_state.chat_input = chat["chat"]
+            break
+else:
+    st.session_state.chat_input = ""
+    
 with col2:
     st.markdown("### ✍️ Write Or Paste a Chat Below")
-    chat_input = st.text_area("Paste a customer-agent conversation here:", height=300)
+    chat_input = st.text_area("Paste a customer-agent conversation here:", value=st.session_state.chat_input, key="chat_input_area", height=300)
 
 # Load chat from sample if selected
 if selected_sample != "None" and not chat_input.strip():
