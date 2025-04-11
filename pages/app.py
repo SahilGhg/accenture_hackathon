@@ -138,6 +138,9 @@ if submitted:
                     status_placeholders["resolution"].success("✅ Resolution suggested!")
             except Exception as e:
                 results["resolution"] = f"❌ Error recommending resolution: {e}"
+                results["source"] = "N/A"
+                results["keywords"] = []
+
 
             try:
                 with st.spinner("Routing to appropriate team..."):
