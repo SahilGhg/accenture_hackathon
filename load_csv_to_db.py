@@ -15,3 +15,21 @@ df.to_sql("historical_tickets", conn, if_exists="replace", index=False)
 
 conn.close()
 print("✅ New tickets.db created with historical_tickets table")
+
+import sqlite3
+
+conn = sqlite3.connect("data/tickets.db")
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS feedback (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conversation_id TEXT,
+    rating INTEGER,
+    comments TEXT
+)
+""")
+
+conn.commit()
+conn.close()
+print("✅ Feedback table created.")
